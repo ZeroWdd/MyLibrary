@@ -23,7 +23,7 @@
     <header class="layui-elip">图书管理系统登录</header>
     <form class="layui-form" action="${APP_PATH}/library/list.action" method="post">
         <div class="layui-input-inline">
-            <input type="text" name="adminId" required lay-verify="required" placeholder="用户名" autocomplete="off"
+            <input type="text" name="name" required lay-verify="required" placeholder="学号" autocomplete="off"
                    class="layui-input">
         </div>
         <div class="layui-input-inline">
@@ -42,7 +42,7 @@
             <button lay-submit lay-filter="login" class="layui-btn">登录</button>
         </div>
         <hr/>
-        <p><a href="${APP_PATH}/toLogin.htm" class="fl">立即注册</a><a href="javascript:;" onclick="forgetpsw();" class="fr">忘记密码？</a></p>
+        <p><a href="${APP_PATH}/toRegister.htm" class="fl">立即注册</a><a href="javascript:;" onclick="forgetpsw();" class="fr">忘记密码？</a></p>
     </form>
 </div>
 
@@ -57,19 +57,20 @@
 
         form.on('submit(login)',function (data) {
             $.ajax({
-                url:'${APP_PATH}/library/list.action',
+                url:'${APP_PATH}/doLogin.do',
                 data:data.field,
-                dataType:'text',
+                dataType:'json',
                 type:'post',
                 success:function (data) {
-                    if (data == '0'){
-                        location.href = "${APP_PATH}/index.action";
-                    }else if (data == '1') {
+                    if (data.status == '0'){
+                        location.href = "${APP_PATH}/library/index.do";
+                    }else if (data.status == '1') {
                         location.href = "${APP_PATH}/frontIndex.action";
-                    }else if (data == '2'){
-                        layer.msg('请选择正确的权限');
+                    }else if (data.status == '2'){
+                        layer.msg(data.message);
                     }else{
-                        layer.msg('登录名或密码错误');
+                        //服务器异常
+                        layer.msg(data.message);
                     }
                 }
             })

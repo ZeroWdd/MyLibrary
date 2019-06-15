@@ -1,21 +1,22 @@
-package com.wdd.library.service;
+package com.wdd.library.dao;
+
 
 import com.wdd.library.pojo.Reader;
-import com.wdd.library.util.PageBean;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
-
-public interface ReaderService {
+public interface ReaderMapper {
     int checkReader(Integer reader_id);
 
     void addReader(Reader reader);
 
     Reader select(Reader rd);
 
+    List<Reader> queryList(Map<String, Object> paramMap);
 
-    PageBean<Reader> listReader(Map<String, Object> paramMap);
+    Integer queryCount(Map<String, Object> paramMap);
 
     Reader selectById(Integer id);
 

@@ -5,7 +5,7 @@ function add(){//添加
 	  title: '添加图书',
 	  skin: 'layui-layer-demo', //加上边框
 	  area: ['800px', '600px'], //宽高
-	  content: 'library/addBook.action'
+	  content: 'https://blog.csdn.net/a10039/article/details/80494350'
 	  });
 }
 

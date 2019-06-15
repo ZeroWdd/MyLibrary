@@ -98,7 +98,7 @@
             <button type="submit" lay-submit lay-filter="sub" class="layui-btn">注册</button>
         </div>
         <hr style="width: 85%" />
-        <p style="width: 85%"><a href="${APP_PATH}/toRegister.htm" class="fl">已有账号？立即登录</a></p>
+        <p style="width: 85%"><a href="${APP_PATH}/toLogin.htm" class="fl">已有账号？立即登录</a></p>
     </form>
 </div>
 
@@ -125,6 +125,7 @@
             $.ajax({
                 url:'${APP_PATH}/checkReader.do',
                 type:'post',
+                dataType:'json',
                 data:{reader_id:user},
                 //验证用户名是否可用
                 success:function(data){
@@ -181,16 +182,16 @@
                 return false;
             }
             $.ajax({
-                url:'${APP_PATH}/library/submitAddReader.action',
+                url:'${APP_PATH}/submitAddReader.do',
                 data:data.field,
-                dataType:'text',
+                dataType:'json',
                 type:'post',
                 success:function(data){
-                    if (data == '1') {
-                        layer.msg('注册成功');
-                        location.href = "login.jsp";
+                    if (data.success) {
+                        layer.msg(data.message);
+                        location.href = "${APP_PATH}/toLogin.htm";
                     }else {
-                        layer.msg('注册失败');
+                        layer.msg(data.message);
                     }
                 }
             })

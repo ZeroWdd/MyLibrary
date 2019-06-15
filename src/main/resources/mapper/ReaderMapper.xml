@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wdd.library.dao.ReaderMapper">
+    <!-- 查询 -->
+    <resultMap type="com.wdd.library.pojo.Reader" id="readerinfo">
+        <result column="reader_id" property="reader_id"/>
+        <result column="name" property="name"/>
+        <result column="password" property="password"/>
+        <result column="sex" property="sex"/>
+        <result column="birthday" property="birthday"/>
+        <result column="address" property="address"/>
+        <result column="telephone" property="telephone"/>
+        <result column="card_state" property="card_state"/>
+    </resultMap>
+    <!--<select id="findReader"  resultMap="Reader" parameterType="PageBean">-->
+        <!--&lt;!&ndash; 根据条件查询 读者的所有信息 &ndash;&gt;-->
+        <!--select-->
+        <!--reader_id,-->
+        <!--name,-->
+        <!--sex,-->
+        <!--birth,-->
+        <!--address,-->
+        <!--telcode,-->
+        <!--card_state-->
+        <!--from-->
+        <!--reader_info-->
+        <!--<where>-->
+            <!--<if test="reader_id!=null and reader_id!=''">-->
+                <!--and reader_id like '%${reader_id}%'-->
+            <!--</if>-->
+            <!--<if test="rname!=null and rname!=''">-->
+                <!--and name like '%${rname}%'-->
+            <!--</if>-->
+        <!--</where>-->
+        <!--<if test="currentPage!=null and currentPage!=''">-->
+            <!--limit #{index}, #{pageSize}-->
+        <!--</if>-->
+    <!--</select>-->
+
+    <!-- 查询条数 -->
+    <!--<select id="readerCount" parameterType="PageBean" resultType="Integer">-->
+        <!--select COUNT(*) FROM reader_info-->
+        <!--<where>-->
+            <!--<if test="reader_id!=null and reader_id!=''">-->
+                <!--and reader_id like '%${reader_id}%'-->
+            <!--</if>-->
+            <!--<if test="rname!=null and rname!=''">-->
+                <!--and name like '%${rname}%'-->
+            <!--</if>-->
+        <!--</where>-->
+    <!--</select>-->
+
+    <!-- 修改读者 -->
+    <!--<select id="updateReader" parameterType="Reader" >-->
+        <!--UPDATE  reader_info SET-->
+        <!--name=#{name},-->
+        <!--sex=#{sex},-->
+        <!--birth=#{birth2},-->
+        <!--address=#{address},-->
+        <!--telcode=#{telcode},-->
+        <!--card_state=#{card_state}-->
+        <!--where reader_id=#{reader_id}-->
+    <!--</select>-->
+
+    <!-- 添加读者 -->
+    <insert id="addReader" parameterType="Reader" >
+        INSERT INTO reader_info(
+        reader_id,
+        name,
+        password,
+        sex,
+        birthday,
+        address,
+        telephone,
+        card_state
+        ) VALUES(#{reader_id},#{name},#{password},#{sex},#{birthday},#{address},#{telephone},#{card_state})
+    </insert>
+
+    <!-- 删除读者 -->
+    <delete id="delReader" parameterType="Integer" >
+        DELETE from  reader_info WHERE id=#{id}
+    </delete>
+
+
+    <!-- 是否存在读者 -->
+    <select id="checkReader" resultType="Integer"  parameterType="Integer">
+        select count(*) from  reader_info WHERE reader_id=#{reader_id}
+    </select>
+
+    <!--读者登录 验证-->
+    <select id="select" parameterType="Reader" resultType="Reader">
+        select *
+        FROM reader_info where reader_id=#{reader_id}  and password=#{password}
+    </select>
+
+
+    <select id="queryList" resultMap="readerinfo" >
+        <!-- 根据条件查询 图书的所有信息 -->
+        SELECT *
+        from reader_info
+        <where>
+            <if test="reader_id!=null"> and reader_id LIKE concat("%",#{reader_id},"%") </if>
+            <if test="name!=null"> and name LIKE concat("%",#{name},"%") </if>
+        </where>
+        limit #{startIndex},#{pagesize}
+    </select>
+
+    <select id="queryCount" resultType="int" >
+        select count(*) from reader_info
+        <where>
+            <if test="reader_id!=null"> and reader_id LIKE concat("%",#{reader_id},"%") </if>
+            <if test="name!=null"> and name LIKE concat("%",#{name},"%") </if>
+        </where>
+    </select>
+
+    <select id="selectById" parameterType="int" resultType="Reader">
+        SELECT *
+        from reader_info
+        where id = #{id}
+    </select>
+
+
+
+    <update id="updateReader" parameterType="Reader" >
+        UPDATE  reader_info SET reader_id=#{reader_id},
+        name=#{name},
+        sex=#{sex},
+        birthday=#{birthday},
+        address=#{address},
+        telephone=#{telephone},
+        card_state=#{card_state}
+        where id=#{id}
+    </update>
+
+
+</mapper>

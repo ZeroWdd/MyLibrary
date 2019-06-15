@@ -27,7 +27,9 @@
 	</bean>
 	
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
-	    <!--<property name="configLocation" value="classpath:mybatis/mybatis-config.xml"></property>-->
+		<!-- 扫描 po 包，使用别名 -->
+		<property name="typeAliasesPackage" value="com.wdd.library.pojo"></property>
+
 	    <property name="dataSource" ref="dataSource"></property>
 	    <property name="mapperLocations">
 	        <list>
@@ -38,7 +40,9 @@
 	
 	<!-- 扫描Mapper映射配置 -->
 	<bean id="mapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-		<property name="basePackage" value="com.wdd.library.*.dao"/>
+		<property name="basePackage" value="com.wdd.library.dao"/>
+		<!-- 注意使用 sqlSessionFactoryBeanName 避免出现spring 扫描组件失效问题 -->
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
 	</bean>
 
 	<!-- 事务管理器 -->
