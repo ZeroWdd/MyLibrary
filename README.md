@@ -4,11 +4,11 @@
 
 ​	这个小Demo是我从bilibili上看到的,于是下载下来自己进行了一些修改,完善与练习，喜欢的可以以给个star,谢谢！
 
-​	下面是原项目地址 Github :
+​	下面是我下载下来的项目地址 Github :
 
 > <https://github.com/wszhxo/SSM-books-management-system> 
 
-​	bilibili视频 :
+​	我所看的bilibili视频 :
 
 > <https://www.bilibili.com/video/av54559980> 
 
