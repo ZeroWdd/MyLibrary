@@ -15,9 +15,9 @@
         <!--FROM reader_info where reader_id=#{adminId}  and password=#{password}-->
     <!--</select>-->
     <!--&lt;!&ndash; 读者修改密码&ndash;&gt;-->
-    <!--<update id="alterpwd" parameterType="Admin" >-->
-        <!--update reader_info set password=#{password} where reader_id=#{adminId}-->
-    <!--</update>-->
+    <update id="alterpwd" parameterType="Admin" >
+        update admin set password=#{password} where id=#{id}
+    </update>
     <!--&lt;!&ndash; 管理员修改密码&ndash;&gt;-->
     <!--<update id="alterpwdAdmin" parameterType="Admin" >-->
         <!--update admin set password=#{password} where admin_id=#{adminId}-->

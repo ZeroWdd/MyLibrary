@@ -36,7 +36,7 @@
             </dl>
         </li>
         <li class="layui-nav-item"><a href="${APP_path}/reader/readerIndex.htm">读者列表</a></li>
-        <li class="layui-nav-item"><a href="${APP_path}/listDisBackAdmin.action">借阅管理</a></li>
+        <li class="layui-nav-item"><a href="${APP_path}/listDisBackReader.htm">借阅管理</a></li>
         <li class="layui-nav-item"><a onclick="alterPwd();">修改密码</a></li>
     </ul>
     <ul class="layui-nav layui-layout-right">
@@ -63,7 +63,7 @@
             title: '修改密码',
             skin: 'layui-layer-demo', //加上边框
             area: ['500px', '300px'], //宽高
-            content: '${APP_path}/toAlterpwdPage.action'
+            content: '${APP_path}/toAlterpwdPage.do'
         });
     }
 

@@ -1,18 +1,26 @@
 package com.wdd.library.controller;
 
 import com.wdd.library.pojo.Admin;
+import com.wdd.library.pojo.LendInfo;
 import com.wdd.library.pojo.Reader;
 import com.wdd.library.service.AdminService;
+import com.wdd.library.service.LeadInfoSerivce;
 import com.wdd.library.service.ReaderService;
 import com.wdd.library.util.AjaxResult;
 import com.wdd.library.util.Const;
+import com.wdd.library.util.PageBean;
+import com.wdd.library.util.StringUtil;
+import org.activiti.engine.impl.util.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpSession;
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 public class commonController {
@@ -21,6 +29,8 @@ public class commonController {
     private ReaderService readerService;
     @Autowired
     private AdminService adminService;
+    @Autowired
+    private LeadInfoSerivce leadInfoSerivce;
 
     //跳转登录界面
     @RequestMapping("/toLogin")
@@ -116,4 +126,105 @@ public class commonController {
         session.invalidate();
         return "login";
     }
+
+    //跳转借阅管理页面
+    @RequestMapping("/listDisBackReader")
+    public  String listDisBackReader() {
+        return "listDisBackReader";
+    }
+
+    @RequestMapping("/listDisBackBook")
+    @ResponseBody
+    public String listDisBackBook(@RequestParam(value = "page", defaultValue = "1") Integer pageno,
+                                  @RequestParam(value = "limit", defaultValue = "5") Integer pagesize,
+                                  @RequestParam(value = "power",defaultValue = "0") Integer power,
+                                  String rname,String bname,String state){
+
+        Map<String,Object> paramMap = new HashMap();
+        paramMap.put("pageno",pageno);
+        paramMap.put("pagesize",pagesize);
+        if(StringUtil.isNotEmpty(bname))  paramMap.put("bname",bname);
+        if(StringUtil.isNotEmpty(rname))  paramMap.put("rname",rname);
+        if(StringUtil.isNotEmpty(state))  paramMap.put("state",state);
+        //为0说明是读者,1说明是管理员点击未还图书
+        if (power.equals(0)){
+            //读者号
+            //pageBean.setAdminId(admin.getAdminId());
+            //读者姓名
+            //pageBean.setRname(admin.getName());
+        }
+        PageBean<LendInfo> pageBean = leadInfoSerivce.queryLeadInfoPage(paramMap);
+        JSONObject obj = new JSONObject();
+        // Layui table 组件要求返回的格式
+        obj.put("code", 0);
+        obj.put("msg", "");
+        obj.put("count",pageBean.getTotalsize());
+        obj.put("data", pageBean.getDatas());
+        return obj.toString();
+    }
+
+    //管理员归还图书
+    @RequestMapping(value = "/backBook")
+    @ResponseBody
+    public AjaxResult backBook(@RequestParam(value = "reader_id" , defaultValue = "1") Integer reader_id,
+                                         @RequestParam(value = "book_id" , defaultValue = "1") Integer book_id) {
+
+        AjaxResult ajaxResult = new AjaxResult();
+        Map<String, Object> ret = new HashMap<String, Object>();
+        ret.put("reader_id",reader_id);
+        ret.put("book_id",book_id);
+        try{
+            leadInfoSerivce.backBook(ret);
+            ajaxResult.setSuccess(true);
+            ajaxResult.setMessage("已归还");
+        }catch (Exception e){
+            e.printStackTrace();
+            ajaxResult.setSuccess(false);
+            ajaxResult.setMessage("归还失败");
+        }
+        return ajaxResult;
+    }
+
+    //跳转到修改密码界面
+    @RequestMapping("/toAlterpwdPage")
+    public String toAlterpwdPage() {
+        return "alterPwd";
+    }
+
+    //确认密码
+    @RequestMapping("/checkPwd")
+    @ResponseBody
+    public AjaxResult checkPwd(Integer password,HttpSession session){
+        AjaxResult ajaxResult = new AjaxResult();
+        Admin admin = (Admin)session.getAttribute(Const.ADMIN);
+        if(admin.getPassword().equals(password)){
+            ajaxResult.setSuccess(true);
+        }else{
+            ajaxResult.setSuccess(false);
+            ajaxResult.setMessage("原密码错误");
+        }
+        return ajaxResult;
+    }
+
+    //修改密码
+    @RequestMapping("/alterpwd")
+    @ResponseBody
+    public AjaxResult alterpwd(Admin admin,HttpSession session){
+        AjaxResult ajaxResult = new AjaxResult();
+        Admin ad = (Admin)session.getAttribute(Const.ADMIN);
+        ad.setPassword(admin.getPassword());
+
+        try{
+            adminService.alterpwd(ad);
+            ajaxResult.setSuccess(true);
+            ajaxResult.setMessage("更改密码成功");
+        }catch(Exception e){
+            e.printStackTrace();
+            ajaxResult.setSuccess(false);
+            ajaxResult.setMessage("更改密码失败");
+
+        }
+        return ajaxResult;
+    }
+
 }

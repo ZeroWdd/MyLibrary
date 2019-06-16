@@ -16,4 +16,9 @@ public class AdminServiceImpl implements AdminService {
     public Admin select(Admin ad) {
         return adminMapper.select(ad);
     }
+
+    @Override
+    public void alterpwd(Admin ad) {
+        adminMapper.alterpwd(ad);
+    }
 }

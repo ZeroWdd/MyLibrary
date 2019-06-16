@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wdd.library.dao.LeadInfoMapper">
+    <!--<resultMap type="com.wdd.library.pojo.LendInfo" id="Lendinfo">-->
+        <!--<result column="id" property="id"/>-->
+        <!--<result column="reader_id" property="reader_id"/>-->
+        <!--<result column="book_id" property="book_id"/>-->
+        <!--<result column="lend_date" property="lend_date"/>-->
+        <!--<result column="back_date" property="back_date"/>-->
+        <!--<result column="fine" property="fine"/>-->
+        <!--<result column="state" property="state"/>-->
+        <!--<association  javaType="Reader" property="reader">-->
+            <!--<result column="cid" property="cid"/>-->
+            <!--<result column="cname" property="cname"/>-->
+        <!--</association>-->
+    <!--</resultMap>-->
+
+
+    <select id="queryList" resultType="Lendinfo" >
+        <!-- 根据条件查询 图书的所有信息 -->
+        select a.id,
+        a.reader_id,
+        a.book_id,
+        a.lend_date,
+        a.back_date,
+        a.state,
+        a.fine,
+        b.name as bookName,
+        c.name as readerName
+        from lend_list a
+        LEFT JOIN book_info b
+        on a.book_id=b.book_id
+        LEFT JOIN reader_info c
+        on a.reader_id=c.reader_id
+        <where>
+            <if test="state!=null and state!=''">
+                and a.state =#{state}
+            </if>
+            <if test="rname!=null and rname!=''">
+                and c.name LIKE concat("%",#{rname},"%")
+            </if>
+            <if test="bname!=null and bname!=''">
+                and b.name LIKE concat("%",#{bname},"%")
+            </if>
+        </where>
+        limit #{startIndex},#{pagesize}
+    </select>
+
+    <select id="queryCount" resultType="int" >
+        select count(*)
+        from lend_list a
+        LEFT JOIN book_info b
+        on a.book_id=b.book_id
+        LEFT JOIN reader_info c
+        on a.reader_id=c.reader_id
+        <where>
+            <if test="state!=null and state!=''">
+                and a.state =#{state}
+            </if>
+            <if test="rname!=null and rname!=''">
+                and c.name LIKE concat("%",#{rname},"%")
+            </if>
+            <if test="bname!=null and bname!=''">
+                and b.name LIKE concat("%",#{bname},"%")
+            </if>
+        </where>
+    </select>
+
+
+    <!--归还图书-->
+    <update id="backbook">
+        UPDATE lend_list set state=1 ,fine=0 where reader_id=#{reader_id} and book_id=#{book_id};
+        UPDATE book_info set stock=stock+1 where book_id=#{book_id};
+    </update>
+
+
+
+</mapper>
