@@ -34,6 +34,7 @@
             <!-- 密码 -->
             <div class="layui-input-inline">
                 <div class="layui-inline" style="width: 85%">
+                    <input type="hidden" name="state" value="${state}">
                     <input type="password" id="pwd" name="password" required  lay-verify="required" placeholder="新密码" autocomplete="off" class="layui-input">
                 </div>
                 <!-- 对号 -->
@@ -84,10 +85,10 @@
             $('#user').blur(function() {
                 var user = $(this).val();
                 $.ajax({
-                    url:'${APP_PATH}/checkPwd.do',
+                    url:'${APP_PATH}/checkPwd.do?',
                     type:'post',
                     dataType:'json',
-                    data:{password:user},
+                    data:{password:user,state:${state}},
                     //验证用户名是否可用
                     success:function(data){
                         if (data.success) {

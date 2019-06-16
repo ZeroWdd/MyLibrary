@@ -156,5 +156,10 @@
         where book_id = #{book_id}
     </select>
 
+    <!-- 减少图书库存 -->
+    <update id="reduceStock" parameterType="int" >
+        UPDATE  book_info SET stock=stock-1
+        where book_id=#{book_id}
+    </update>
 
 </mapper>

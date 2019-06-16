@@ -61,4 +61,9 @@ public class ReaderServiceImpl implements ReaderService {
         readerMapper.delReader(id);
     }
 
+    @Override
+    public void alterpwd(Reader reader) {
+        readerMapper.alterpwd(reader);
+    }
+
 }

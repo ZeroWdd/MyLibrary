@@ -134,5 +134,8 @@
         where id=#{id}
     </update>
 
+    <update id="alterpwd" parameterType="Reader" >
+        update reader_info set password=#{password} where reader_id=#{reader_id}
+    </update>
 
 </mapper>

@@ -2,7 +2,10 @@ package com.wdd.library.controller;
 
 import com.wdd.library.pojo.Book;
 import com.wdd.library.pojo.Category;
+import com.wdd.library.pojo.LendInfo;
+import com.wdd.library.pojo.Reader;
 import com.wdd.library.service.BookService;
+import com.wdd.library.service.LendInfoSerivce;
 import com.wdd.library.util.AjaxResult;
 import com.wdd.library.util.Const;
 import com.wdd.library.util.PageBean;
@@ -26,6 +29,9 @@ public class libraryController {
 
     @Autowired
     private BookService bookService;
+    @Autowired
+    private LendInfoSerivce lendInfoSerivce;
+
 
     @RequestMapping("/index")
     public String index(HttpSession session){
@@ -40,7 +46,7 @@ public class libraryController {
     @ResponseBody
     public String listBook(@RequestParam(value = "page", defaultValue = "1") Integer pageno,
                            @RequestParam(value = "limit", defaultValue = "5") Integer pagesize,
-                           String bname,String author,String cid
+                           String bname,String author,String cid,HttpSession session
                            ) {
 
         Map<String,Object> paramMap = new HashMap();
@@ -51,6 +57,10 @@ public class libraryController {
         if(StringUtil.isNotEmpty(author))  paramMap.put("author",author);
         if(StringUtil.isNotEmpty(cid))  paramMap.put("cid",Integer.parseInt(cid));
         PageBean<Book> pageBean = bookService.queryBookPage(paramMap);
+
+        //获取类别
+        List<Category> categoryList = bookService.listCategory();
+        session.setAttribute(Const.CATEGORY,categoryList);
 
         // 转化为json
         //List<Book> list = bookService.listAllBook(pageBean);
@@ -145,6 +155,43 @@ public class libraryController {
     }
 
 
+    //跳转读者借阅界面readerIndex.jsp
+    @RequestMapping("/frontIndex")
+    public String frontIndex() {
+        return "frontIndex";
+    }
 
+    @RequestMapping("/lendBook")
+    @ResponseBody
+    public AjaxResult borrowBook(Integer book_id,HttpSession session) {
+        AjaxResult ajaxResult = new AjaxResult();
+
+        Reader reader = (Reader)session.getAttribute(Const.READER);
+        //判断库存是否足够
+        Book book = bookService.selectById(book_id);
+        if (book.getStock()==0){
+            ajaxResult.setStatus("2");
+            return ajaxResult;
+        }
+
+        //判断该读者是否已经借过该图书
+        LendInfo lendInfo = new LendInfo();
+        lendInfo.setBook_id(book_id);
+        lendInfo.setReader_id(reader.getReader_id());
+        if (lendInfoSerivce.isLended(lendInfo)){
+            ajaxResult.setStatus("0");
+            return ajaxResult;
+        }
+        //判断是否达到借书上限
+        Integer cardState = lendInfoSerivce.cardState(reader.getReader_id());
+        if (cardState.equals(reader.getCard_state())){
+            ajaxResult.setStatus("3");
+            return ajaxResult;
+
+        }
+        lendInfoSerivce.lendBook(lendInfo);
+        ajaxResult.setStatus("1");
+        return ajaxResult;
+    }
 
 }

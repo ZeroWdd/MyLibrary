@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.wdd.library.dao.LeadInfoMapper">
+<mapper namespace="com.wdd.library.dao.LendInfoMapper">
     <!--<resultMap type="com.wdd.library.pojo.LendInfo" id="Lendinfo">-->
         <!--<result column="id" property="id"/>-->
         <!--<result column="reader_id" property="reader_id"/>-->
@@ -75,6 +75,31 @@
         UPDATE book_info set stock=stock+1 where book_id=#{book_id};
     </update>
 
+    <!-- 判断读者是否借过此书-->
+    <select id="isLended" parameterType="LendInfo" resultType="Integer">
+        select  count(*) from lend_list where reader_id=#{reader_id} and book_id=#{book_id} and state=2
+    </select>
+
+
+    <select id="cardState" parameterType="int" resultType="Integer">
+        select  count(*) from lend_list where reader_id=#{reader_id}
+    </select>
+
+
+    <!-- 添加借阅记录 -->
+    <insert id="addLead" parameterType="LendInfo" >
+        INSERT into lend_list(
+        reader_id,
+        book_id,
+        lend_date,
+        back_date,
+        state,
+        fine
+        )
+        VALUES(
+        #{reader_id},#{book_id},#{lend_date},#{back_date},#{state},#{fine}
+        )
+    </insert>
 
 
 </mapper>

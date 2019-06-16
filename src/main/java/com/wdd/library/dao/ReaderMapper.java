@@ -23,4 +23,6 @@ public interface ReaderMapper {
     void updateReader(Reader reader);
 
     void delReader(Integer id);
+
+    void alterpwd(Reader reader);
 }

@@ -65,7 +65,7 @@
                     if (data.status == '0'){
                         location.href = "${APP_PATH}/library/index.do";
                     }else if (data.status == '1') {
-                        location.href = "${APP_PATH}/frontIndex.action";
+                        location.href = "${APP_PATH}/library/frontIndex.htm";
                     }else if (data.status == '2'){
                         layer.msg(data.message);
                     }else{

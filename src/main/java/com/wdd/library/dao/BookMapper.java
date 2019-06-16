@@ -20,4 +20,6 @@ public interface BookMapper {
     void updateBook(Book book);
 
     void delBook(int book_id);
+
+    void reduceStock(Integer book_id);
 }

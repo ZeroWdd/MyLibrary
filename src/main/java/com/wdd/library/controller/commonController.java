@@ -4,7 +4,7 @@ import com.wdd.library.pojo.Admin;
 import com.wdd.library.pojo.LendInfo;
 import com.wdd.library.pojo.Reader;
 import com.wdd.library.service.AdminService;
-import com.wdd.library.service.LeadInfoSerivce;
+import com.wdd.library.service.LendInfoSerivce;
 import com.wdd.library.service.ReaderService;
 import com.wdd.library.util.AjaxResult;
 import com.wdd.library.util.Const;
@@ -13,7 +13,7 @@ import com.wdd.library.util.StringUtil;
 import org.activiti.engine.impl.util.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -30,7 +30,7 @@ public class commonController {
     @Autowired
     private AdminService adminService;
     @Autowired
-    private LeadInfoSerivce leadInfoSerivce;
+    private LendInfoSerivce lendInfoSerivce;
 
     //跳转登录界面
     @RequestMapping("/toLogin")
@@ -128,9 +128,15 @@ public class commonController {
     }
 
     //跳转借阅管理页面
-    @RequestMapping("/listDisBackReader")
-    public  String listDisBackReader() {
-        return "listDisBackReader";
+    @RequestMapping("/listDisBackAdmin")
+    public  String listDisBackAdmin() {
+        return "listDisBackAdmin";
+    }
+
+    //跳转读者借阅记录页面
+    @RequestMapping("/listDisBack")
+    public  String listDisBack() {
+        return "listDisBack";
     }
 
     @RequestMapping("/listDisBackBook")
@@ -153,7 +159,7 @@ public class commonController {
             //读者姓名
             //pageBean.setRname(admin.getName());
         }
-        PageBean<LendInfo> pageBean = leadInfoSerivce.queryLeadInfoPage(paramMap);
+        PageBean<LendInfo> pageBean = lendInfoSerivce.queryLeadInfoPage(paramMap);
         JSONObject obj = new JSONObject();
         // Layui table 组件要求返回的格式
         obj.put("code", 0);
@@ -174,7 +180,7 @@ public class commonController {
         ret.put("reader_id",reader_id);
         ret.put("book_id",book_id);
         try{
-            leadInfoSerivce.backBook(ret);
+            lendInfoSerivce.backBook(ret);
             ajaxResult.setSuccess(true);
             ajaxResult.setMessage("已归还");
         }catch (Exception e){
@@ -187,35 +193,53 @@ public class commonController {
 
     //跳转到修改密码界面
     @RequestMapping("/toAlterpwdPage")
-    public String toAlterpwdPage() {
+    public String toAlterpwdPage(String state, Model model) {
+        model.addAttribute("state",state);
         return "alterPwd";
     }
 
     //确认密码
     @RequestMapping("/checkPwd")
     @ResponseBody
-    public AjaxResult checkPwd(Integer password,HttpSession session){
+    public AjaxResult checkPwd(Integer password,String state,HttpSession session){
         AjaxResult ajaxResult = new AjaxResult();
-        Admin admin = (Admin)session.getAttribute(Const.ADMIN);
-        if(admin.getPassword().equals(password)){
-            ajaxResult.setSuccess(true);
+        if (state.equals("0")){
+            Admin admin = (Admin)session.getAttribute(Const.ADMIN);
+            if(admin.getPassword().equals(password)){
+                ajaxResult.setSuccess(true);
+            }else{
+                ajaxResult.setSuccess(false);
+                ajaxResult.setMessage("原密码错误");
+            }
         }else{
-            ajaxResult.setSuccess(false);
-            ajaxResult.setMessage("原密码错误");
+            Reader reader = (Reader)session.getAttribute(Const.READER);
+            if(reader.getPassword().equals(password)){
+                ajaxResult.setSuccess(true);
+            }else{
+                ajaxResult.setSuccess(false);
+                ajaxResult.setMessage("原密码错误");
+            }
         }
+
         return ajaxResult;
     }
 
     //修改密码
     @RequestMapping("/alterpwd")
     @ResponseBody
-    public AjaxResult alterpwd(Admin admin,HttpSession session){
+    public AjaxResult alterpwd(Integer password,String state,HttpSession session){
         AjaxResult ajaxResult = new AjaxResult();
-        Admin ad = (Admin)session.getAttribute(Const.ADMIN);
-        ad.setPassword(admin.getPassword());
 
         try{
-            adminService.alterpwd(ad);
+            if(state.equals("0")){
+                Admin admin = (Admin)session.getAttribute(Const.ADMIN);
+                admin.setPassword(password);
+                adminService.alterpwd(admin);
+            }else{
+                Reader reader = (Reader)session.getAttribute(Const.READER);
+                reader.setPassword(password);
+                readerService.alterpwd(reader);
+            }
             ajaxResult.setSuccess(true);
             ajaxResult.setMessage("更改密码成功");
         }catch(Exception e){
