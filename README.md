@@ -1,17 +1,5 @@
 ## 图书管理系统
 
-## 注 ：
-
-​	这个小Demo是我从bilibili上看到的,于是下载下来自己进行了一些修改,完善与练习！
-
-​	下面是我下载下来的项目地址 Github :
-
-> <https://github.com/wszhxo/SSM-books-management-system> 
-
-​	我所看的bilibili视频 :
-
-> <https://www.bilibili.com/video/av54559980> 
-
 ## 编译环境  ：
 
 >jdk 1.8 
